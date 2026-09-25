@@ -3,7 +3,7 @@ from htmlnode import HTMLNode, LeafNode, ParentNode
 
 class TestHTMLNode(unittest.TestCase):
     
-    def tets_eq(self):
+    def test_eq(self):
         node = HTMLNode("a", "Click here", props={"href":"https://www.google.com"})
         node2 = HTMLNode("a", "Click here", props={"href":"https://www.google.com"})
         node3 = HTMLNode("b", "Push this", props={"href":"https://www.google.com"})
