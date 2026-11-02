@@ -44,7 +44,7 @@ class TestNodeSplitter(unittest.TestCase):
 
     def test_extracting_links(self):
         matches = extract_markdown_links(
-            "None of this text matters anyway, for the bit. [to boot dev]((https://www.boot.dev))"
+            "None of this text matters anyway, for the bit. [to boot dev](https://www.boot.dev)"
         )
         self.assertListEqual([("to boot dev", "https://www.boot.dev")], matches)
 
