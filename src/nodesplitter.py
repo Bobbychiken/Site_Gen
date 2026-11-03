@@ -3,7 +3,7 @@ import re
 
 def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: TextType) -> list[TextNode]:
     new_nodes =[]
-    split_list = []
+    #split_list = []
     for node in old_nodes:
         if node.text_type != TextType.TEXT:
             new_nodes.append(node)
@@ -72,4 +72,15 @@ def extract_markdown_links(input_text: str)-> list:
     extracted_links = re.findall(link_pattern, input_text)
 
     return extracted_links
+
+def Text_to_textnodes(input_text):
+    nodes = [TextNode(input_text, TextType.TEXT)]
+    nodes = split_nodes_image(nodes)
+    nodes = split_nodes_link(nodes)
+    nodes = split_nodes_delimiter(nodes, "'", TextType.CODE)
+    nodes = split_nodes_delimiter(nodes, "*", TextType.BOLD)
+    nodes = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
+    return nodes
+
+     
 

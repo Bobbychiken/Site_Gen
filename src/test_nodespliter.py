@@ -1,6 +1,6 @@
 import unittest
 from textnode import TextNode, TextType
-from nodesplitter import split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link
+from nodesplitter import split_nodes_delimiter, extract_markdown_images, extract_markdown_links, split_nodes_image, split_nodes_link, Text_to_textnodes
 
 class TestNodeSplitter(unittest.TestCase):
 
@@ -80,6 +80,38 @@ class TestNodeSplitter(unittest.TestCase):
                         new_nodes,
                     )
 
+
+    def text_Text_to_textnodes(self):
+        node = TextNode(
+            "'Here:' We have some _silly little_ text that *doesn't much matter*.[to boot dev](https://www.boot.dev). But don't yet be 'fooled' by the *text*. There is _more!_[google home](https://www.google.com) and a Rick Roll for good measure ![Rick Roll Gif](https://i.giphy.com/g7GKcSzwQfugw.webp)"
+        )
+        new_nodes = Text_to_textnodes([node.text])
+        self.assertListEqual(
+            [
+
+
+
+
+
+
+                TextNode("Here:", TextType.CODE),
+                TextNode("We have some ", TextType.TEXT),
+                TextNode("silly little", TextType.ITALIC),
+                TextNode(" text that ", TextType.TEXT),
+                TextNode("doesn't much matter", TextType.BOLD),
+                TextNode(".", TextType.TEXT),
+                TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
+                TextNode(". But don't yet be ", TextType.TEXT),
+                TextNode("fooled", TextType.CODE),
+                TextNode(" by the ", TextType.BOLD),
+                TextNode(". There is ", TextType.TEXT),
+                TextNode("more!", TextType.ITALIC),
+                TextNode("google home", TextType.LINK, "https://www.google.com"),
+                TextNode("and a Rick Roll for good measure ", TextType.TEXT),
+                TextNode("Rick Roll Gif", TextType.IMAGE, "https://i.giphy.com/g7GKcSzwQfugw.webp"),
+            ], 
+            new_nodes
+        )
 
 
 
