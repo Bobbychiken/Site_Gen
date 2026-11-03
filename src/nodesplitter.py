@@ -82,5 +82,13 @@ def Text_to_textnodes(input_text):
     nodes = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
     return nodes
 
-     
+def markdown_to_blocks(markdown): 
+    raw_blocks = markdown.split("\n\n") 
+
+    blocks = []
+    for block in raw_blocks:
+        cleaned_block = block.strip()
+        if cleaned_block != "":
+            blocks.append(cleaned_block)
+    return blocks
 
