@@ -1,5 +1,8 @@
 from enum import Enum
 import re
+from nodesplitter import markdown_to_blocks, Text_to_textnodes 
+from textnode import text_node_to_html_node, TextNode, TextType
+from htmlnode import HTMLNode, ParentNode, LeafNode
 
 class BlockType(Enum):
     PARAGRAPH = "paragraph"
@@ -40,3 +43,66 @@ def block_to_block_type(block: str) -> BlockType:
         
     # 6. Default: Paragraph
     return BlockType.PARAGRAPH
+
+def markdown_to_html_node(markdown):
+    incoming = []
+    blocks = markdown_to_blocks(markdown)
+    for block in blocks:
+        blocktype = block_to_block_type(block)
+        if blocktype == BlockType.CODE:
+            codeblock = block.removeprefix("```\n")
+            freshblock = codeblock.removesuffix("```")
+            new_node = TextNode(freshblock, TextType.TEXT)
+            textcode = text_node_to_html_node(new_node)
+            middle = ParentNode("code", [textcode])
+            outer = ParentNode("pre", [middle])
+            incoming.append(outer)
+        elif blocktype == BlockType.PARAGRAPH: 
+            parablock = block.replace('\n', " ")
+            para_node = text_to_children(parablock)
+            node = ParentNode("p", para_node)
+           
+            incoming.append(node)
+        elif blocktype == BlockType.HEADING: 
+            hashes,headblock = block.split(" ",1)
+            heading_node = text_to_children(headblock)
+            node = ParentNode(f"h{len(hashes)}", heading_node)
+            incoming.append(node)
+
+        elif blocktype == BlockType.QUOTE: 
+            lines = block.split("\n")
+            cleaned = []
+            for line in lines: 
+                cleaned.append(line.removeprefix('> ').removeprefix('>'))
+            quoteblock = " ".join(cleaned)
+            quote_node = text_to_children(quoteblock)
+            node = ParentNode("blockquote", quote_node)
+            incoming.append(node)
+
+        elif blocktype == BlockType.UNORDERED_LIST: 
+            lines = block.split("\n")
+            items = []
+            for line in lines: 
+                stripped= line.removeprefix("- ")
+                items.append(ParentNode("li", text_to_children(stripped)))
+            node = ParentNode("ul", items)
+            incoming.append(node)
+
+        elif blocktype == BlockType.ORDERED_LIST: 
+            lines = block.split("\n")
+            items = []
+            for line in lines: 
+                ol_line = line.split(" ",1)[1]
+                items.append(ParentNode("li", text_to_children(ol_line)))
+            node = ParentNode("ol", items)
+            incoming.append(node)
+
+    return  ParentNode("div", incoming)
+
+def text_to_children(text):
+    translation = Text_to_textnodes(text)
+    children =[]
+    for item in translation: 
+        node = text_node_to_html_node(item)
+        children.append(node)
+    return children
