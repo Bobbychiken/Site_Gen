@@ -27,6 +27,7 @@ def generate_page(from_path, template_path, dest_path):
         model = m.read()
     content_html = markdown_to_html_node(source).to_html()
     title = extract_title(source)
+    #print(f"{title}")
     page_html = model.replace("{{ Title }}", title).replace("{{ Content }}", content_html) 
     dest_dir = os.path.dirname(dest_path)
     if dest_dir: 
