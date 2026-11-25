@@ -106,3 +106,15 @@ def text_to_children(text):
         node = text_node_to_html_node(item)
         children.append(node)
     return children
+
+def extract_title(markdown):
+    blocks = markdown_to_blocks(markdown)
+    for block in blocks:
+        if block.startswith("# "):
+            hashes,title = block.split(" ",1)
+            return title.strip()
+         
+    raise Exception("no h1 header found")
+            
+
+    

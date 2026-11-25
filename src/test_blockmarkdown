@@ -1,5 +1,5 @@
 import unittest
-from block_markdown import block_to_block_type, BlockType, markdown_to_html_node
+from block_markdown import block_to_block_type, BlockType, markdown_to_html_node, extract_title
 
 class TestNodeSplitter(unittest.TestCase):
     def test_block_to_block_type(self):
@@ -58,6 +58,39 @@ the **same** even with inline stuff
             html,
             "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
         )
+
+    def test_extraction(self):
+         md = """
+         '''
+# Super mega header
+
+## Does it actually capture what is desired
+# More at 11 
+         '''
+         """
+         md2 = """
+         '''
+### Super mega header
+
+## Does it actually capture what is desired
+# More at 11 
+         '''
+         """
+         md3 = """
+         '''
+Super mega header
+
+## Does it actually capture what is desired
+### More at 11       
+         '''
+         """
+         
+         
+         self.assertEqual(extract_title(md),"Super mega header")
+         self.assertEqual(extract_title(md2),"More at 11")
+         with self.assertRaises(Exception):
+            extract_title(md3)
+    
 
 if __name__ == "__main__":
     unittest.main()
