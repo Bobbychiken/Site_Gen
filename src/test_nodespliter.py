@@ -19,7 +19,7 @@ class TestNodeSplitter(unittest.TestCase):
 
     def test_split_bold(self):
         node = TextNode("We've got some *bold text* here", TextType.TEXT)
-        new_nodes = split_nodes_delimiter([node], "*", TextType.BOLD)
+        new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
 
         self.assertEqual(
             new_nodes,[
