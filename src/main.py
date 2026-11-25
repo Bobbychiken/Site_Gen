@@ -1,5 +1,6 @@
 import os
 import shutil
+from pathlib import Path
 from textnode import TextNode, TextType
 from block_markdown import markdown_to_html_node, extract_title
 
@@ -19,6 +20,7 @@ def copy_recursive(source, target):
             print(f"Copied: {src_path} -> {tar_path}")
         elif os.path.isdir(src_path):
             copy_recursive(src_path, tar_path)
+
 def generate_page(from_path, template_path, dest_path):
     print(f"generating page from {from_path} to {dest_path} using {template_path}")
     with open(from_path, "r", encoding="utf-8") as s:
@@ -36,11 +38,23 @@ def generate_page(from_path, template_path, dest_path):
         d.write(page_html)
 
 
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    md_dir_paths = os.listdir(dir_path_content)
+    for entry in md_dir_paths:
+        from_path = os.path.join(dir_path_content, entry)
+        dest_path = os.path.join(dest_dir_path, entry)
+        if os.path.isfile(from_path):
+            generate_page(from_path, template_path, Path(dest_path).with_suffix(".html"))
+                          
+        else:
+            generate_pages_recursive(from_path,template_path,dest_path)
+
+
 
 def main():
     #anchor_text = TextNode("some anchor text", TextType.LINK , "https://www.boot.dev")
     #print(anchor_text)
     copy_static_to_public("static","public")
-    generate_page("content/index.md","template.html","public/index.html")
+    generate_pages_recursive("content","template.html","public")
 if __name__ == "__main__":
     main()
